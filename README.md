@@ -27,6 +27,28 @@ Project Structure:
 - Router.js - Defines paths and their corresponding components
 
 This app can be accessed at https://yourflix-interaction.firebaseapp.com/
+
+## Config File
+
+```
+export default {
+    firebaseConfig: {
+        apiKey: "API_KEY",
+        authDomain: "yourflix-interaction.firebaseapp.com",
+        databaseURL: "https://yourflix-interaction.firebaseio.com",
+        projectId: "yourflix-interaction",
+        storageBucket: "yourflix-interaction.appspot.com",
+        messagingSenderId: "SENDER_ID",
+        appId: "APP_ID",
+        measurementId: "M_ID"
+    },
+    corsURL: 'https://yacdn.org/proxy/',
+    //corsURL: 'https://cors-anywhere.herokuapp.com/',
+    omdbBaseURL: 'http://www.omdbapi.com',
+    omdbKey: 'OMDB_KEY',
+}
+```
+
 ## Project setup
 ```
 npm install
