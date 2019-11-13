@@ -39,7 +39,6 @@ export default {
             this.searchMovies();
         }
         if(!this.currentPage) {
-            console.log(this.currentPage);
             this.currentPage = 1;
         }
         this.$root.$on('addMovieToList', (id) => {
