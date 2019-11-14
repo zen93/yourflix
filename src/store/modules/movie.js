@@ -1,7 +1,9 @@
 import omdb from '../../api/omdb';
 
 const state = {
-    moviesList: [],
+    moviesList: {
+        Search: []
+    },
     movieDetails: {},
 }
 

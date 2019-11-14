@@ -16,7 +16,7 @@
                     </router-link>
                     <b-button block v-if="$store.getters['list/currentList'].id != ''" variant="dark" class="mt-2 mb-2" @click="addMovieToList(movie.imdbID)">Add to {{ $store.getters['list/currentList'].name }}</b-button>
                 </div>
-                <div class="col-12">
+                <div v-if="showPagination" class="col-12">
                     <b-pagination
                         v-model="currentPage"
                         :total-rows="rows"
@@ -35,6 +35,8 @@ import firebase from 'firebase';
 
 export default {
     mounted() {
+        if(!this.title) 
+            this.$store.commit('movie/setMoviesList', { Search: [] });
         if(this.title) {
             this.searchMovies();
         }
@@ -60,6 +62,15 @@ export default {
             else {
                 return Number.MAX_SAFE_INTEGER;
             }
+        },
+        showPagination() {
+            let search = this.$store.getters['movie/moviesList']['Search'];
+            let listLength;
+            if(search)
+                listLength = search.length;
+            if(listLength)
+                return true;
+            return false;
         }
     },
     watch: {
