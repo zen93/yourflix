@@ -96,6 +96,10 @@ export default {
     },
     methods: {
         addList() {
+            if(!this.listName) {
+                this.addStatus = 'Please enter a name';
+                return;
+            }
             const db = firebase.firestore();
             db
                 .collection('users')
