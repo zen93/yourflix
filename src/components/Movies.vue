@@ -10,10 +10,10 @@
             <div v-if="this.$store.getters.status == ''" class="row">
                 <div class="col-12 col-sm-4 text-center" v-for="movie in this.$store.getters['movie/moviesList']['Search']" :key="movie.imdbID">
                     <router-link  :to="'/moviedetails?id=' + movie.imdbID">
-                        <img draggable="true" @dragstart="drag" :id="movie.imdbID" class="img-fluid mx-auto d-block" v-if="movie.Poster != 'N/A'" :src="movie.Poster"/>
-                        <img draggable="true" @dragstart="drag" :id="movie.imdbID" class="img-fluid mx-auto d-block" v-else src="../assets/film-poster-placeholder.png"/>
+                        <img draggable="true" @dragstart="drag" :alt="movie.Title" :id="movie.imdbID" class="imgFixedHeight mx-auto d-block" v-if="movie.Poster != 'N/A'" :src="movie.Poster"/>
+                        <img draggable="true" @dragstart="drag" :alt="movie.Title" :id="movie.imdbID" class="imgFixedHeight mx-auto d-block" v-else src="../assets/film-poster-placeholder.png"/>
                     </router-link>
-                    <router-link :to="'/moviedetails?id=' + movie.imdbID">
+                    <router-link class="truncate" :title="movie.Title" :to="'/moviedetails?id=' + movie.imdbID">
                         {{ movie.Title }}
                     </router-link>
                     <b-button block v-if="$store.getters['list/currentList'].id != ''" variant="dark" class="mt-2 mb-2" @click="addMovieToList(movie.imdbID)">Add to {{ $store.getters['list/currentList'].name }}</b-button>
@@ -40,6 +40,7 @@ export default {
         if(!this.title) 
             this.$store.commit('movie/setMoviesList', { Search: [] });
         if(this.title) {
+            this.$store.commit('movie/setMoviesList', { Search: [] });
             this.searchMovies();
         }
         if(!this.currentPage) {
@@ -147,5 +148,25 @@ export default {
     font-size: 26px;
     cursor: pointer;
     color: #ccc;
+}
+.imgFixedHeight {
+    max-width: 100%;
+    height: auto; 
+}
+@media(min-width: 576px) {
+    .truncate {
+        display: block;
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+@media(min-width: 576px) {
+    .imgFixedHeight {
+        max-width: 100%;
+        height: 300px;
+        object-fit: contain; 
+    }
 }
 </style>

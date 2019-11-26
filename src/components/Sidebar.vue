@@ -23,7 +23,7 @@
                 <div class="border border-dark rounded mt-2" v-if="showDragBox" @drop="drop" @dragover="allowDrop">
                     <p class="d-none d-sm-block" v-if="!listHasMovies">Drag movie here to add to list</p>
                     <p class="d-sm-none" v-if="!listHasMovies">Click add button to add movie to list</p>
-                    <div v-for="movie in this.$store.getters['list/getMovies']($store.getters['list/currentList'].id).movies" :key="movie.imdbID">
+                    <div class="text-center" v-for="movie in this.$store.getters['list/getMovies']($store.getters['list/currentList'].id).movies" :key="movie.imdbID">
                         <div class="img-wrap">
                             <span class="close" @click="deleteMovieFromList(movie.imdbID)">&times;</span>
                             <router-link  :to="'/moviedetails?id=' + movie.imdbID">
@@ -121,7 +121,7 @@ export default {
 </script>
 
 <style scoped>
-@media (min-width: 768px) {
+@media (min-width: 576px) {
   .collapse.dont-collapse-sm {
     display: block !important;
     height: auto !important;
