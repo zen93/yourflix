@@ -9,9 +9,9 @@
             </div>
             <div v-if="this.$store.getters.status == ''" class="row">
                 <div class="col-12 col-sm-4 text-center" v-for="movie in this.$store.getters['movie/moviesList']['Search']" :key="movie.imdbID">
-                    <router-link  :to="'/moviedetails?id=' + movie.imdbID">
-                        <img draggable="true" @dragstart="drag" :alt="movie.Title" :id="movie.imdbID" class="imgFixedHeight mx-auto d-block" v-if="movie.Poster != 'N/A'" :src="movie.Poster"/>
-                        <img draggable="true" @dragstart="drag" :alt="movie.Title" :id="movie.imdbID" class="imgFixedHeight mx-auto d-block" v-else src="../assets/film-poster-placeholder.png"/>
+                    <router-link :to="'/moviedetails?id=' + movie.imdbID">
+                        <img draggable="true" @dragstart="drag" :title="movie.Title" :alt="movie.Title" :id="movie.imdbID" class="imgFixedHeight mx-auto d-block" v-if="movie.Poster != 'N/A'" :src="movie.Poster"/>
+                        <img draggable="true" @dragstart="drag" :title="movie.Title" :alt="movie.Title" :id="movie.imdbID" class="imgFixedHeight mx-auto d-block" v-else src="../assets/film-poster-placeholder.png"/>
                     </router-link>
                     <router-link class="truncate" :title="movie.Title" :to="'/moviedetails?id=' + movie.imdbID">
                         {{ movie.Title }}
@@ -33,9 +33,14 @@
 
 <script>
 import _ from 'lodash';
-import firebase from 'firebase';
+import dragShared from '../shared/dragShared';
+import movieShared from '../shared/movieShared';
 
 export default {
+    created() {
+        this.drag = dragShared.drag;
+        this.addMovieToList = movieShared.addMovieToList;
+    },
     mounted() {
         if(!this.title) 
             this.$store.commit('movie/setMoviesList', { Search: [] });
@@ -107,9 +112,6 @@ export default {
         }
     },
     methods: {
-        drag(ev) {
-            ev.dataTransfer.setData("text", ev.target.id);
-        },
         resetSearch() {
             this.title = '';
             this.currentPage = 1;
@@ -120,20 +122,6 @@ export default {
                                 this.$store.dispatch('movie/searchMovies', { title: this.title, page: this.currentPage }); 
                             }, 300)();
         },
-        addMovieToList(id) {
-            const db = firebase.firestore();
-            let listId = this.$store.getters['list/currentList'].id;
-            if(listId) {
-                db
-                .collection('users')
-                .doc(firebase.auth().currentUser.uid)
-                .collection('lists')
-                .doc(listId)
-                .update({
-                    movies: firebase.firestore.FieldValue.arrayUnion(this.$store.getters['movie/getCurrentMovieDetails'](id))
-                });
-            }
-        }
     }
 }
 </script>

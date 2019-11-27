@@ -8,8 +8,8 @@
                     <div class="row">
                         <div class="col-12 col-sm-6">
                             <p>{{ this.$store.getters.status }}</p>
-                            <img class="img-fluid" v-if="movieDetails.Poster != 'N/A'" :src="movieDetails.Poster"/>
-                            <img class="img-fluid" v-else src="../assets/film-poster-placeholder.png"/>
+                            <img draggable="true" @dragstart="drag" :id="movieDetails.imdbID"  class="img-fluid" v-if="movieDetails.Poster != 'N/A'" :src="movieDetails.Poster"/>
+                            <img draggable="true" @dragstart="drag" :id="movieDetails.imdbID" class="img-fluid" v-else src="../assets/film-poster-placeholder.png"/>
                             <h4>{{ movieDetails.Title }}</h4>
                             <b-button block v-if="$store.getters['list/currentList'].id != ''" variant="dark" class="mt-2 mb-2" @click="addMovieToList(movieDetails.imdbID)">Add to {{ $store.getters['list/currentList'].name }}</b-button>
                             <h5>Plot</h5>
@@ -73,8 +73,9 @@
 <script>
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
+import dragShared from '../shared/dragShared';
+import movieShared from '../shared/movieShared';
 import { mapState } from 'vuex';
-import firebase from 'firebase';
 
 export default {
     name: 'MovieDetails',
@@ -82,36 +83,24 @@ export default {
         'navbar': Navbar,
         'sidebar': Sidebar,
     },
+    created() {
+        this.drag = dragShared.drag;
+        this.addMovieToList = movieShared.addMovieToList;
+    },
     mounted() {
         if(this.currentMovie) { 
             this.getDetails();
         }
-        //this.movieDetails = this.$store.getters['movie/movieDetails'];
     },
     data() {
         return {
             currentMovie: this.$route.query.id,
-            //movieDetails: this.$store.getters['movie/movieDetails'],
         }
     },
     methods: {
         getDetails() {
             this.$store.dispatch('movie/movieDetails', this.currentMovie);
         },
-        addMovieToList(id) {
-            const db = firebase.firestore();
-            let listId = this.$store.getters['list/currentList'].id;
-            if(listId) {
-                db
-                .collection('users')
-                .doc(firebase.auth().currentUser.uid)
-                .collection('lists')
-                .doc(listId)
-                .update({
-                    movies: firebase.firestore.FieldValue.arrayUnion(this.$store.getters['movie/getCurrentMovieDetails'](id))
-                });
-            }
-        }
     },
     computed: {
         ...mapState('movie', ['movieDetails'])

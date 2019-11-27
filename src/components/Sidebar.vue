@@ -42,9 +42,12 @@
 </template>
 
 <script>
-import firebase from 'firebase';
+import movieShared from '../shared/movieShared';
 
 export default {
+    created() {
+        this.deleteMovieFromList = movieShared.deleteMovieFromList;
+    },
     mounted() {
         this.setSelectValue();
     },
@@ -63,7 +66,6 @@ export default {
                 let arr = [];
                 lists.forEach((list) => {
                     arr.push({ value: list.id, text: list.name });
-                    // arr.push({...{ value: list.id, text: list.name }, ...list});
                 })
                 return arr;
             },
@@ -104,18 +106,6 @@ export default {
                 selected = { id: '', name: null };                
             this.$store.commit('list/setCurrentList', selected);
         },
-        deleteMovieFromList(movieId) {
-            const db = firebase.firestore();
-            let listId = this.$store.getters['list/currentList'].id;
-            db
-                .collection('users')
-                .doc(firebase.auth().currentUser.uid)
-                .collection('lists')
-                .doc(listId)
-                .update({
-                    movies: firebase.firestore.FieldValue.arrayRemove(this.$store.getters['list/getMovie'](listId, movieId))
-                });
-        }
     }
 }
 </script>
@@ -137,7 +127,7 @@ export default {
     right: 10px;
     z-index: 100;
     background-color: #FFF;
-    padding: 5px 2px 2px;
+    padding: 3px 2px 2px;
     color: #000;
     font-weight: bold;
     cursor: pointer;

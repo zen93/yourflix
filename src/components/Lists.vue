@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-12" v-if="!$store.getters.user.loggedIn">
                     <router-link to="/login">
-                        Login to create/delete lists
+                        <b-button variant="primary" class="mt-2">Login to create/delete lists</b-button>
                     </router-link>
                 </div>
                 <div v-else class="col-12">
@@ -30,6 +30,7 @@
                             :value="null"
                             :options="listsWithId"
                             id="delete-list-select"
+                            @change="setCurrentList"
                             >
                             <template v-slot:first>
                                 <option :value="null">Choose List...</option>
@@ -40,6 +41,20 @@
                     <b-alert v-model="showDeleteStatus" variant="primary" dismissible>
                         {{ deleteStatus }}
                     </b-alert>
+                    <div class="row">
+                        <div class="col-12 col-sm-4 text-center" v-for="movie in this.$store.getters['list/getMovies']($store.getters['list/currentList'].id).movies" :key="movie.imdbID">
+                            <div class="img-wrap">
+                                <span class="close" @click="deleteMovieFromList(movie.imdbID)">&times;</span>
+                                <router-link  :to="'/moviedetails?id=' + movie.imdbID">
+                                    <img class="imgFixedHeight mt-2 mx-auto d-block" v-if="movie.Poster != 'N/A'" :src="movie.Poster"/>
+                                    <img class="imgFixedHeight mt-2 mx-auto d-block" v-else src="../assets/film-poster-placeholder.png"/>
+                                </router-link>
+                            </div>
+                            <router-link class="truncate" :to="'/moviedetails?id=' + movie.imdbID" >
+                                {{ movie.Title }}
+                            </router-link>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -48,12 +63,19 @@
 
 <script>
 import Navbar from './Navbar';
+import movieShared from '../shared/movieShared';
 import firebase from 'firebase';
 
 export default {
     name: 'Lists',
     components: {
         'navbar': Navbar,
+    },
+    created() {
+        this.deleteMovieFromList = movieShared.deleteMovieFromList;
+    },
+    mounted() {
+        this.setCurrentList();
     },
     data() {
         return {
@@ -95,6 +117,17 @@ export default {
         }
     },
     methods: {
+        setCurrentList() {
+            let select = document.getElementById('delete-list-select');
+            if(select) {
+                let id = select.options[select.selectedIndex].value;
+                let name = select.options[select.selectedIndex].text;
+                let selected = { id, name };
+                if(id == '')
+                    selected = { id: '', name: null };                
+                this.$store.commit('list/setCurrentList', selected);
+            }
+        },
         addList() {
             if(!this.listName) {
                 this.addStatus = 'Please enter a name';
@@ -140,3 +173,51 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.img-wrap {
+    position: relative;
+}
+
+.img-wrap .close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    z-index: 100;
+    background-color: #FFF;
+    padding: 3px 2px 2px;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: .2;
+    text-align: center;
+    font-size: 22px;
+    line-height: 10px;
+    border-radius: 50%;
+    padding-bottom: 5px;
+}
+
+.imgFixedHeight {
+    max-width: 100%;
+    height: auto; 
+}
+
+@media(min-width: 576px) {
+    .truncate {
+        display: block;
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+@media(min-width: 576px) {
+    .imgFixedHeight {
+        max-width: 100%;
+        height: 300px;
+        object-fit: contain; 
+    }
+}
+
+</style>
