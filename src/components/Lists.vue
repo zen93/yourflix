@@ -30,7 +30,7 @@
                             :value="null"
                             :options="listsWithId"
                             id="delete-list-select"
-                            @change="setCurrentList"
+                            @change.native="setCurrentList"
                             >
                             <template v-slot:first>
                                 <option :value="null">Choose List...</option>
@@ -65,6 +65,7 @@
 import Navbar from './Navbar';
 import movieShared from '../shared/movieShared';
 import firebase from 'firebase';
+import listShared from '../shared/listShared';
 
 export default {
     name: 'Lists',
@@ -73,6 +74,7 @@ export default {
     },
     created() {
         this.deleteMovieFromList = movieShared.deleteMovieFromList;
+        this.setCurrentList = listShared.setCurrentList;
     },
     mounted() {
         this.setCurrentList();
@@ -117,17 +119,6 @@ export default {
         }
     },
     methods: {
-        setCurrentList() {
-            let select = document.getElementById('delete-list-select');
-            if(select) {
-                let id = select.options[select.selectedIndex].value;
-                let name = select.options[select.selectedIndex].text;
-                let selected = { id, name };
-                if(id == '')
-                    selected = { id: '', name: null };                
-                this.$store.commit('list/setCurrentList', selected);
-            }
-        },
         addList() {
             if(!this.listName) {
                 this.addStatus = 'Please enter a name';

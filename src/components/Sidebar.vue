@@ -14,7 +14,7 @@
                     :value="null"
                     :options="listsWithId"
                     id="add-list-select"
-                    @change="setCurrentList"
+                    @change.native="setCurrentList"
                     >
                     <template v-slot:first>
                         <option :value="null">Select List...</option>
@@ -43,10 +43,12 @@
 
 <script>
 import movieShared from '../shared/movieShared';
+import listShared from '../shared/listShared';
 
 export default {
     created() {
         this.deleteMovieFromList = movieShared.deleteMovieFromList;
+        this.setCurrentList = listShared.setCurrentList;
     },
     mounted() {
         this.setSelectValue();
@@ -96,15 +98,6 @@ export default {
                 document.getElementById('add-list-select').value = this.$store.getters['list/currentList'].id;
                 
             }
-        },
-        setCurrentList() {
-            let select = document.getElementById('add-list-select');
-            let id = select.options[select.selectedIndex].value;
-            let name = select.options[select.selectedIndex].text;
-            let selected = { id, name };
-            if(id == '')
-                selected = { id: '', name: null };                
-            this.$store.commit('list/setCurrentList', selected);
         },
     }
 }

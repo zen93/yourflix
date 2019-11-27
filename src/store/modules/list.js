@@ -3,7 +3,7 @@ import firebase from 'firebase';
 
 const state = {
     lists: [],
-    currentList: { id: '', name: null},  //Stores id of current list
+    currentList: { id: '', name: null },  //Stores id of current list
 }
 
 const getters = {
@@ -11,7 +11,11 @@ const getters = {
     currentList: state => state.currentList,
     getMovies: state => id => {
         if(id == '') return { movies: [] };
-        return state.lists.filter( list => list.id == id)[0];
+        let list = state.lists.filter( list => list.id == id)[0];
+        if(list)
+            return list;
+        else
+            return { movies: [] };
     },
     getMovie: state => (listId, movieId) => {
         if(listId == '') return {};
