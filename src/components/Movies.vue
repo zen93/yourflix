@@ -2,7 +2,7 @@
     <div class="col-12 col-sm-8">
         <div class="row">
             <div class="col-12">
-                <b-input @keyup.enter="searchMovies" class="mt-2" v-model="title" placeholder="Search Movie Title..."></b-input>
+                <b-input @keyup.enter="searchMovies" class="mt-2" :value="title" @input.native="title = $event.target.value" placeholder="Search Movie Title..."></b-input>
                 <span class="resetSearch" @click="resetSearch" v-if="showReset">&times;</span>
                 <b-badge v-if="showComponents" variant="secondary">Movies found: {{ numOfMovies }}</b-badge>
                 <p>{{ this.$store.getters.status }}</p>
