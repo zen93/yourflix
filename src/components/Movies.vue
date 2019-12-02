@@ -16,7 +16,7 @@
                     <router-link class="truncate" :title="movie.Title" :to="'/moviedetails?id=' + movie.imdbID">
                         {{ movie.Title }}
                     </router-link>
-                    <b-button block v-if="$store.getters['list/currentList'].id != ''" variant="dark" class="mt-2 mb-2" @click="addMovieToList(movie.imdbID)">Add to {{ $store.getters['list/currentList'].name }}</b-button>
+                    <b-button block v-if="$store.getters['list/currentList'].id != ''" :variant="isInList(movie.imdbID)? 'success': 'dark'" class="mt-2 mb-2" @click="addMovieToList(movie.imdbID)">{{ isInList(movie.imdbID) ? '✓ Added to ' + $store.getters['list/currentList'].name : '+ Add to ' + $store.getters['list/currentList'].name }}</b-button>
                 </div>
                 <div v-if="showComponents" class="col-12">
                     <b-pagination
@@ -40,6 +40,8 @@ export default {
     created() {
         this.drag = dragShared.drag;
         this.addMovieToList = movieShared.addMovieToList;
+        this.deleteMovieFromList = movieShared.deleteMovieFromList;
+        this.isInList = movieShared.isInList;
     },
     mounted() {
         if(!this.title) 
