@@ -27,6 +27,22 @@
                     ></b-pagination>
                 </div>
             </div>
+            <div v-if="!title">
+                <div class="row">
+                    <div class="col-12 col-sm-4">
+                        <h3>🔎 Search for movies!</h3>
+                        <p>Use the search bar on the top to search for your favourite movies!</p>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <h3>📋 Make Lists!</h3>
+                        <p>Make lists of your favourite movies. First, make a list <router-link to="/lists">here</router-link>. Then search a movie on the <router-link to="/search">search page</router-link>. Select the list under "Your Lists" and then click the "+ Add to List" button to add the movie to the list.</p>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <h3>Hints</h3>
+                        <p>Click on a movie to see more details. Also, You can use the "+ Add to list" button to add a movie to your list or you can drag and drop the image on to the black-bordered box on the left. You can drag images from the movie details page too!</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -42,6 +58,9 @@ export default {
         this.addMovieToList = movieShared.addMovieToList;
         this.deleteMovieFromList = movieShared.deleteMovieFromList;
         this.isInList = movieShared.isInList;
+        this.searchMovies = _.debounce(() => {
+                                this.$store.dispatch('movie/searchMovies', { title: this.title, page: this.currentPage }); 
+                            }, 300);
     },
     mounted() {
         if(!this.title) 
@@ -99,14 +118,14 @@ export default {
     watch: {
         title: function () {
             this.currentPage = 1;
-            this.$router.replace({ path: '/', query: { q: this.title, p: this.currentPage }});
+            this.$router.replace({ path: '/', query: { q: this.title, p: this.currentPage }}).catch(() => {});
             if(this.title) {
                 this.searchMovies();
                 this.oldPage = this.currentPage;
             }
         },
         currentPage: function() {
-            this.$router.replace({ path: '/', query: { q: this.title, p: this.currentPage }});
+            this.$router.replace({ path: '/', query: { q: this.title, p: this.currentPage }}).catch(() => {});
             if(this.title && this.oldPage != this.currentPage) {
                 this.searchMovies();
                 this.oldPage = this.currentPage;
@@ -118,11 +137,6 @@ export default {
             this.title = '';
             this.currentPage = 1;
             this.$store.commit('movie/setMoviesList', { Search: [] });
-        },
-        searchMovies() {
-            _.debounce(() => {
-                                this.$store.dispatch('movie/searchMovies', { title: this.title, page: this.currentPage }); 
-                            }, 300)();
         },
     }
 }
